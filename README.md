@@ -1,30 +1,32 @@
-# DeepSeek Client
+# OpenHermes Client
 ---
-## Pytorch installation
+> Boilerplate for local LLM clients.
+
+## Setup requirements
 ---
-```python
-pip install torch
-```
-## llama.cpp quickstart
----
-Requirement: cmake
+Check `g++` installation...
 ```bash
-sudo dnf install cmake
+g++ --version
 ```
+...and install if necessary.
+
+Setup a virtual environment for `Python 3.14` and install requirements...
 
 ```bash
-git clone https://github.com/ggml-org/llama.cpp
-cd llama.cpp
-cmake -B build
-cmake --build build --config Release
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-The llama.cpp directory contains a subdirectory where the models are expected to be found. 
-
-[Link to models](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF/blob/main/README.md).
-
-## Other huggingface transformers
+## Run cli
 ---
 ```bash
-pip install "transformers[torch]"
+python main.py
 ```
+
+## Links to models
+---
+> [Link to hrms models (huggingface, mistral)](https://huggingface.co/TheBloke/OpenHermes-2.5-Mistral-7B-GGUF).
+
+> [Link to dpsk models (huggingface, deepseek)](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF)(not implemented).
