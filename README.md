@@ -1,5 +1,7 @@
 # DeepSeek Client
 ---
+Boilerplate LLM client.
+
 ## Pytorch installation
 ---
 ```python
@@ -15,7 +17,7 @@ sudo dnf install cmake
 ```bash
 git clone https://github.com/ggml-org/llama.cpp
 cd llama.cpp
-cmake -B build
+cmake -B build -DLLAMA_CURL=OFF
 cmake --build build --config Release
 ```
 
