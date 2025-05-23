@@ -6,6 +6,7 @@ Boilerplate LLM client.
 ---
 ```python
 pip install torch
+pip install dpsk_requirements.txt
 ```
 ## llama.cpp quickstart
 ---
@@ -29,4 +30,10 @@ The llama.cpp directory contains a subdirectory named models where the models ar
 ---
 ```bash
 pip install "transformers[torch]"
+```
+
+# Diffusion models client
+---
+```bash
+pip install diff_requirements.txt
 ```
