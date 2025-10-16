@@ -1,4 +1,5 @@
-transformers
+torch
+transformers[torch]
 diffusers
 accelerate
 safetensors
