@@ -5,7 +5,7 @@ def main():
     model = GPT2LMHeadModel.from_pretrained("distilgpt2")
     tokenizer = GPT2Tokenizer.from_pretrained("distilgpt2")
 
-    with open("system.txt", encoding="utf-8") as f:
+    with open("gpttwo/system.txt", encoding="utf-8") as f:
         seed_text = f.read()
 
     input_text = seed_text.strip()
