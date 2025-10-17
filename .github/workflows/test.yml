@@ -39,7 +39,7 @@ jobs:
           path: ~/.cache/huggingface
           key: ${{ runner.os }}-hug-${{ hashFiles("README.md") }}
           restore-keys:
-            ${{ runner.os }}-hf-
+            ${{ runner.os }}-hug-
 
       - name: Run
         run: |
