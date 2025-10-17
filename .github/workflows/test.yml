@@ -2,8 +2,6 @@ name: test
 
 on:
   workflow_dispatch:
-    branches:
-      - "main"
 
 jobs:
   test:
