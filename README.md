@@ -1,4 +1,4 @@
-# Boilerplate for llm and diffusion model
+## Boilerplate for llm and diffusion model
 ---
 
 *Sections to be written...*
