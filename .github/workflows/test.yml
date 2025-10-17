@@ -22,7 +22,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip/.venv
-          key: ${{ runner.os }}-pip-${{ hashFiles("README.md") }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('README.md') }}
           restore-keys:
             ${{ runner.os }}-pip-
       
@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
-          key: ${{ runner.os }}-hug-${{ hashFiles("README.md") }}
+          key: ${{ runner.os }}-hug-${{ hashFiles('README.md') }}
           restore-keys:
             ${{ runner.os }}-hug-
 
