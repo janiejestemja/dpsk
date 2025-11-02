@@ -3,7 +3,7 @@ from llama_cpp import Llama
 def main():
     # Load model
     llm = Llama(
-        model_path="./llama.cpp/models/deepseek-llm-7b-chat.Q4_K_M.gguf",
+        model_path="./models/deepseek-llm-7b-chat.Q4_K_M.gguf",
         n_ctx=4096,
         verbose=False,
     )
