@@ -4,11 +4,11 @@ class Prompt():
         self.chat = [instruction]
 
     def from_user(self, text: str):
-        self.chat.append("<|im_start|>user\n" + text + "<|im_end|>")
-        self.chat.append("<|im_start|>assistant\n")
+        self.chat.append("<|user|>\n" + text + "</s>")
+        self.chat.append("<|assistant|>\n")
 
     def from_assistant(self, text: str):
-        self.chat[-1] += text
+        self.chat[-1] += text + "</s>"
 
     def get_prompt(self):
         prompt = ""
