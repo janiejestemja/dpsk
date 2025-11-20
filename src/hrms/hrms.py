@@ -1,18 +1,17 @@
 from llama_cpp import Llama
 
 class Prompt():
-    prompt_path = "src/prompts/tiny/tiny_p.txt"
-    model_path = "../models/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"
+    prompt_path = "src/hrms/hrms_p.txt"
 
     def __init__(self, instruction):
         self.chat = [instruction]
 
     def from_user(self, text: str):
-        self.chat.append("<|user|>\n" + text + "</s>\n")
-        self.chat.append("<|assistant|>\n")
+        self.chat.append("<|im_start|>user\n" + text + "<|im_end|>")
+        self.chat.append("<|im_start|>assistant\n")
 
     def from_assistant(self, text: str):
-        self.chat[-1] += text + "</s>\n"
+        self.chat[-1] += text + "<|im_end|>"
 
     def get_prompt(self):
         prompt = ""
@@ -21,12 +20,12 @@ class Prompt():
         return prompt
 
     @classmethod
-    def load_model(cls):
+    def load_model(cls, model_path):
         # Try loading model
         try:
             llm = Llama(
-                model_path=cls.model_path,
-                n_ctx=2048,
+                model_path=model_path,
+                n_ctx=32768,
                 verbose=False,
             )
         except Exception:
@@ -42,15 +41,14 @@ class Prompt():
 
         return llm, instruction
 
-    @staticmethod
-    def gen_response(llm, prompt):
+    def gen_response(self, llm):
         output = llm(
-            prompt,
+            self.get_prompt(),
             max_tokens=1024,
             temperature=0.5,
             top_p=0.9,
             top_k=50,
             repeat_penalty=1.1,
-            stop=["</s>"],
+            stop=["<|im_end|>"],
         )
         return output["choices"][0]["text"]

@@ -1,18 +1,19 @@
+from pathlib import Path
 from llama_cpp import Llama
 
 class Prompt():
-    prompt_path = "src/prompts/dpsk/dpsk_p.txt"
-    model_path = "../models/deepseek-llm-7b-chat.Q4_K_M.gguf"
+    module_dir = Path(__file__).parent
+    prompt_path = module_dir / "tiny_p.txt"
 
     def __init__(self, instruction):
-        self.chat = [instruction + "\n"]
+        self.chat = [instruction]
 
     def from_user(self, text: str):
-        self.chat.append("User: " + text + "\n\n")
-        self.chat.append("Assistant: ")
+        self.chat.append("<|user|>\n" + text + "</s>\n")
+        self.chat.append("<|assistant|>\n")
 
     def from_assistant(self, text: str):
-        self.chat[-1] += text + "\n\n"
+        self.chat[-1] += text + "</s>\n"
 
     def get_prompt(self):
         prompt = ""
@@ -21,12 +22,12 @@ class Prompt():
         return prompt
 
     @classmethod
-    def load_model(cls):
+    def load_model(cls, model_path):
         # Try loading model
         try:
             llm = Llama(
-                model_path=cls.model_path,
-                n_ctx=4096,
+                model_path=model_path,
+                n_ctx=2048,
                 verbose=False,
             )
         except Exception:
@@ -42,15 +43,14 @@ class Prompt():
 
         return llm, instruction
 
-    @staticmethod
-    def gen_response(llm, prompt):
+    def gen_response(self, llm):
         output = llm(
-            prompt,
+            self.get_prompt(),
             max_tokens=1024,
             temperature=0.5,
             top_p=0.9,
             top_k=50,
             repeat_penalty=1.1,
-            stop=["<｜end▁of▁sentence｜>"],
+            stop=["</s>"],
         )
         return output["choices"][0]["text"]

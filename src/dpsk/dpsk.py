@@ -1,18 +1,17 @@
 from llama_cpp import Llama
 
 class Prompt():
-    prompt_path = "src/prompts/hrms/hrms_p.txt"
-    model_path = "../models/openhermes-2.5-mistral-7b.Q4_K_M.gguf"
+    prompt_path = "src/dpsk/dpsk_p.txt"
 
     def __init__(self, instruction):
-        self.chat = [instruction]
+        self.chat = [instruction + "\n"]
 
     def from_user(self, text: str):
-        self.chat.append("<|im_start|>user\n" + text + "<|im_end|>")
-        self.chat.append("<|im_start|>assistant\n")
+        self.chat.append("User: " + text + "\n\n")
+        self.chat.append("Assistant: ")
 
     def from_assistant(self, text: str):
-        self.chat[-1] += text + "<|im_end|>"
+        self.chat[-1] += text + "\n\n"
 
     def get_prompt(self):
         prompt = ""
@@ -26,7 +25,7 @@ class Prompt():
         try:
             llm = Llama(
                 model_path=model_path,
-                n_ctx=32768,
+                n_ctx=4096,
                 verbose=False,
             )
         except Exception:
@@ -42,15 +41,14 @@ class Prompt():
 
         return llm, instruction
 
-    @staticmethod
-    def gen_response(llm, prompt):
+    def gen_response(self, llm):
         output = llm(
-            prompt,
+            self.get_prompt(),
             max_tokens=1024,
             temperature=0.5,
             top_p=0.9,
             top_k=50,
             repeat_penalty=1.1,
-            stop=["<|im_end|>"],
+            stop=["<｜end▁of▁sentence｜>"],
         )
         return output["choices"][0]["text"]

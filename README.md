@@ -2,6 +2,12 @@
 ---
 > Boilerplate setup for local LLM clients running without GPU. Using various `Q4_K_M` models made available by huggingface.
 
+## Features
+---
+- Run a local language model in terminal
+- Load in a file at the start to chat about
+- Chat until context limit is reached
+
 ## Setup requirements
 ---
 Clone the repo and change directory into it...
@@ -26,41 +32,39 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Create a relative directory called `models`, like...
-```bash
-mkdir ../models
-```
-...and download one of the models linked down below into it.
-
-## Run cli
----
-> Run an infinite loop with a chatbot until the context window breaks...
-
-> To exit gracefully use `EOFError`
-
+## Download model
 ### TinyLLm (1.1B)
 ---
 > [Download link to TinyLlama](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/blob/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf)
 
 >[Link to more information about the model](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF).
-```bash
-python main.py tiny
-```
 
 ### OpenHermes (7B)
 ---
 > [Download link to OpenHermes](https://huggingface.co/TheBloke/OpenHermes-2.5-Mistral-7B-GGUF/blob/main/openhermes-2.5-mistral-7b.Q4_K_M.gguf)
 
 > [Link to more information about the model](https://huggingface.co/TheBloke/OpenHermes-2.5-Mistral-7B-GGUF).
-```bash
-python main.py hrms
-```
 
 ### DeepSeek (7B)
 ---
 > [Download link to DeepSeek](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF/blob/main/deepseek-llm-7b-chat.Q4_K_M.gguf)
 
 > [Link to more information about the model](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF).
-```bash
-python main.py dpsk
+
+## Run cli
+---
+> Run an infinite loop with a chatbot until the context window breaks...
+
+### Usage
+---
+```plaintext
+main.py [-h] --model {dpsk,hrms,tiny} --model_path MODEL_PATH [--src SRC]
 ```
+> The source argument is used to load a file to chat about. It will be appended to the initial question.
+
+Run the following command to print available options.
+```bash
+python main.py -h
+```
+
+> To exit gracefully use `EOFError` (`Ctrl + D`)
