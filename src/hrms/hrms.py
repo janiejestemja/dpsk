@@ -1,7 +1,9 @@
+from pathlib import Path
 from llama_cpp import Llama
 
 class Prompt():
-    prompt_path = "src/hrms/hrms_p.txt"
+    module_dir = Path(__file__).parent
+    prompt_path = module_dir / "hrms_p.txt"
 
     def __init__(self, instruction):
         self.chat = [instruction]
