@@ -9,7 +9,9 @@ parser = argparse.ArgumentParser(description="CLI LLM Client.")
 parser.add_argument("--model", choices=model_flags, help="model flag", required=True)
 parser.add_argument("--model_path", type=str, help="Path to model", required=True)
 parser.add_argument("--src", type=str, help="Path to file.")
+parser.add_argument("--debug", type=str, help="Flag for development")
 args = parser.parse_args()
+
 
 # Load model
 if not os.path.exists(args.model_path):
@@ -34,6 +36,23 @@ match args.model:
         sysprom = tiny.Prompt(instruction)
 
 def todo_main():
+    from src.todo_context import TodoContext
+    todo_paths = TodoContext.extract_codeblocks(args.src, 0)
+    todo_paths.sort(key=lambda x: x.path)
+
+    for path in todo_paths:
+        print(path.path)
+        for i, line_number in enumerate(path.line_numbers):
+            print("Line Number:\n  " + str(line_number))
+            code_block = "```\n" + "".join(path.code_blocks[i][2]) + "\n```"
+            sysprom.reset_instruction()
+            sysprom.from_user(code_block)
+            text_output = sysprom.gen_response(llm)
+            print("Response:")
+            print(text_output)
+            print()
+
+def file_main():
     with open(args.src) as f:
         file_content = f.read()
     print("File provided from:\n", args.src)
@@ -42,7 +61,7 @@ def todo_main():
     print("Example instruction:\n", example_instruction)
 
     instruction = input("Initial question:\n")
-    inital_prompt = instruction + "```n" + "".join(file_content) + "\n```"
+    inital_prompt = instruction + "```\n" + "".join(file_content) + "\n```"
     sysprom.from_user(inital_prompt)
     try:
         text_output = sysprom.gen_response(llm)
@@ -95,7 +114,9 @@ def main():
 
 
 if __name__ == "__main__":
-    if args.src:
+    if args.debug:
         todo_main()
+    elif args.src:
+        file_main()
     else:
         main()

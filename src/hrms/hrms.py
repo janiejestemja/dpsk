@@ -6,6 +6,7 @@ class Prompt():
     prompt_path = module_dir / "hrms_p.txt"
 
     def __init__(self, instruction):
+        self.instruction = instruction
         self.chat = [instruction]
 
     def from_user(self, text: str):
@@ -20,6 +21,9 @@ class Prompt():
         for line in self.chat:
             prompt += line
         return prompt
+    
+    def reset_instruction(self):
+        self.chat = [self.instruction]
 
     @classmethod
     def load_model(cls, model_path):
