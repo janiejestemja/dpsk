@@ -1,21 +1,56 @@
-from llama_cpp import Llama
-from hermes import Prompt
+import os
+import sys
+import argparse
 
+model_flags = ["dpsk", "hrms", "tiny"]
 
-def main():
-    # Load model
-    llm = Llama(
-        model_path="../models/openhermes-2.5-mistral-7b.Q4_K_M.gguf",
-        n_ctx=32768,  # 4096,
-        verbose=False,
-    )
+# Definition of CLI
+parser = argparse.ArgumentParser(description="CLI LLM Client.")
+parser.add_argument("--model", choices=model_flags, help="model flag", required=True)
+parser.add_argument("--model_path", type=str, help="Path to model", required=True)
+parser.add_argument("--src", type=str, help="Path to file.")
+args = parser.parse_args()
 
-    with open("prompt.txt") as f:
-        instruction = f.read().strip()
-    sysprom = Prompt(instruction)
+# Load model
+if not os.path.exists(args.model_path):
+    sys.exit("Path to model must exist.")
+
+match args.model:
+    case "dpsk":
+        from src.dpsk import dpsk
+        llm, instruction = dpsk.Prompt.load_model(args.model_path)
+        sysprom = dpsk.Prompt(instruction)
+    case "hrms":
+        from src.hrms import hrms
+        llm, instruction = hrms.Prompt.load_model(args.model_path)
+        sysprom = hrms.Prompt(instruction)
+    case "tiny":
+        from src.tiny import tiny
+        llm, instruction = tiny.Prompt.load_model(args.model_path)
+        sysprom = tiny.Prompt(instruction)
+
+def todo_main():
+    with open(args.src) as f:
+        file_content = f.read()
+    print("File provided from:\n", args.src)
+
+    example_instruction = "Could you please give me summary of the following file?\n"
+    print("Example instruction:\n", example_instruction)
+
+    instruction = input("Initial question:\n")
+    inital_prompt = instruction + "```n" + "".join(file_content) + "\n```"
+    sysprom.from_user(inital_prompt)
+    try:
+        text_output = sysprom.gen_response(llm)
+    except ValueError:
+        sys.exit("Input file to long. Ending session.")
+    else:
+        sysprom.from_assistant(text_output)
+        print("Summary of given file:\n", text_output)
 
     while True:
         try:
+            print("")
             user_input = input("Prompt: ")
             print("")
 
@@ -25,23 +60,38 @@ def main():
 
         else:
             sysprom.from_user(user_input)
-            prompt = sysprom.get_prompt()
+            try:
+                text_output = sysprom.gen_response(llm)
+            except ValueError:
+                sys.exit("Context limit reached. Ending session.")
+            else:
+                sysprom.from_assistant(text_output)
+                print(text_output)
 
-            output = llm(
-                prompt,
-                max_tokens=1024,
-                temperature=0.5,
-                top_p=0.9,
-                top_k=50,
-                repeat_penalty=1.1,
-                stop=["<|im_end|>"],
-            )
+def main():
+    while True:
+        try:
+            print("")
+            user_input = input("Prompt: ")
+            print("")
 
-            text_output = output["choices"][0]["text"]
-            sysprom.from_assistant(text_output)
+        except EOFError:
+            print("")
+            break
 
-            print(text_output)
+        else:
+            sysprom.from_user(user_input)
+            try:
+                text_output = sysprom.gen_response(llm)
+            except ValueError:
+                sys.exit("Context limit reached. Ending session.")
+            else:
+                sysprom.from_assistant(text_output)
+                print(text_output)
 
 
 if __name__ == "__main__":
-    main()
+    if args.src:
+        todo_main()
+    else:
+        main()
