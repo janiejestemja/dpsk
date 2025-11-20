@@ -34,6 +34,9 @@ mkdir ../models
 
 ## Run cli
 ---
+> Run an infinite loop with a chatbot until the context window breaks...
+
+> To exit gracefully use `EOFError`
 
 ### TinyLLm (1.1B)
 ---
@@ -58,8 +61,6 @@ python main.py hrms
 > [Download link to DeepSeek](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF/blob/main/deepseek-llm-7b-chat.Q4_K_M.gguf)
 
 > [Link to more information about the model](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF).
-
-> Experimental - integreation unstable.
 ```bash
 python main.py dpsk
 ```
