@@ -33,21 +33,27 @@ pip install -r requirements.txt
 ```
 
 ## Download model
-### TinyLLm (1.1B)
+### TinyLLm
 ---
-> [Download link to TinyLlama](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/blob/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf)
+> [Download link to TinyLlama (1.1B)](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/blob/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf)
 
 >[Link to more information about the model](https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF).
 
-### OpenHermes (7B)
+### Phi-3-mini 
 ---
-> [Download link to OpenHermes](https://huggingface.co/TheBloke/OpenHermes-2.5-Mistral-7B-GGUF/blob/main/openhermes-2.5-mistral-7b.Q4_K_M.gguf)
+> [Download link to Phi-3-mini](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf/resolve/main/Phi-3-mini-4k-instruct-q4.gguf)
+
+> [Link to more information about the model](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf)
+
+### OpenHermes
+---
+> [Download link to OpenHermes (7B)](https://huggingface.co/TheBloke/OpenHermes-2.5-Mistral-7B-GGUF/blob/main/openhermes-2.5-mistral-7b.Q4_K_M.gguf)
 
 > [Link to more information about the model](https://huggingface.co/TheBloke/OpenHermes-2.5-Mistral-7B-GGUF).
 
-### DeepSeek (7B)
+### DeepSeek
 ---
-> [Download link to DeepSeek](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF/blob/main/deepseek-llm-7b-chat.Q4_K_M.gguf)
+> [Download link to DeepSeek (7B)](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF/blob/main/deepseek-llm-7b-chat.Q4_K_M.gguf)
 
 > [Link to more information about the model](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF).
 
@@ -58,7 +64,7 @@ pip install -r requirements.txt
 ### Usage
 ---
 ```plaintext
-main.py [-h] --model {dpsk,hrms,tiny} --model_path MODEL_PATH [--src SRC]
+main.py [-h] --model {dpsk,hrms,phi,tiny} --model_path MODEL_PATH [--src SRC]
 ```
 > The source argument is used to load a file to chat about. It will be appended to the initial question.
 

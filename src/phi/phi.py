@@ -3,17 +3,17 @@ from llama_cpp import Llama
 
 class Prompt():
     module_dir = Path(__file__).parent
-    prompt_path = module_dir / "hrms_p.txt"
+    prompt_path = module_dir / "phi_p.txt"
 
     def __init__(self, instruction):
         self.chat = [instruction]
 
     def from_user(self, text: str):
-        self.chat.append("<|im_start|>user\n" + text + "<|im_end|>")
-        self.chat.append("<|im_start|>assistant\n")
+        self.chat.append("<|user|>\n" + text + "<|end|>")
+        self.chat.append("<|assistant|>\n")
 
     def from_assistant(self, text: str):
-        self.chat[-1] += text + "<|im_end|>"
+        self.chat[-1] += text + "<|end|>"
 
     def get_prompt(self):
         prompt = ""
@@ -27,7 +27,7 @@ class Prompt():
         try:
             llm = Llama(
                 model_path=model_path,
-                n_ctx=32768,
+                n_ctx=4096,
                 verbose=False,
             )
         except Exception:
@@ -51,6 +51,6 @@ class Prompt():
             top_p=0.9,
             top_k=50,
             repeat_penalty=1.1,
-            stop=["<|im_end|>"],
+            stop=["<|end|>"],
         )
         return output["choices"][0]["text"]

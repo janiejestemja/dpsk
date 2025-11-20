@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 
-model_flags = ["dpsk", "hrms", "tiny"]
+model_flags = ["dpsk", "hrms", "phi", "tiny"]
 
 # Definition of CLI
 parser = argparse.ArgumentParser(description="CLI LLM Client.")
@@ -24,6 +24,10 @@ match args.model:
         from src.hrms import hrms
         llm, instruction = hrms.Prompt.load_model(args.model_path)
         sysprom = hrms.Prompt(instruction)
+    case "phi":
+        from src.phi import phi
+        llm, instruction = phi.Prompt.load_model(args.model_path)
+        sysprom = phi.Prompt(instruction)
     case "tiny":
         from src.tiny import tiny
         llm, instruction = tiny.Prompt.load_model(args.model_path)
