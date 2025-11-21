@@ -5,8 +5,13 @@ class Prompt():
     module_dir = Path(__file__).parent
     model_flags = ["dpsk", "hrms", "phi", "tiny"]
 
+    prompts = {
+        "chat": "chat.txt",
+        "todo": "todo.txt",
+        "dpsk": "dpsk.txt",
+    }
+
     tiny_config = {
-        "prompt_file": "tiny_p.txt",
         "context_length": 2048,
 
         "user_start_token": "<|user|>\n",
@@ -14,10 +19,12 @@ class Prompt():
         "assistant_start_token": "<|assistant|>\n",
         "assistant_end_token": "</s>\n",
         "llm_stop_token": "</s>",
+
+        "prompt_start_token": "<|system|>\n",
+        "prompt_end_token": "</s>",
     }
 
     phi_config = {
-        "prompt_file": "phi_p.txt",
         "context_length": 4096,
 
         "user_start_token": "<|user|>\n",
@@ -25,10 +32,12 @@ class Prompt():
         "assistant_start_token": "<|assistant|>\n",
         "assistant_end_token": "<|end|>\n",
         "llm_stop_token": "<|end|>",
+
+        "prompt_start_token": "<|system|>\n",
+        "prompt_end_token": "<|end|>",
     }
 
     hrms_config = {
-        "prompt_file": "hrms_p.txt",
         "context_length": 32768,
 
         "user_start_token": "<|im_start|>user\n",
@@ -36,10 +45,13 @@ class Prompt():
         "assistant_start_token": "<|im_start|>assistant\n",
         "assistant_end_token": "<|im_end|>\n",
         "llm_stop_token": "<|im_end|>",
+
+        "prompt_start_token": "<|im_start|>\n",
+        "prompt_end_token":"<|im_end|>",
+        
     }
 
     dpsk_config = {
-        "prompt_file": "dpsk_p.txt",
         "context_length": 4096, 
 
         "user_start_token": "User: ",
@@ -47,11 +59,13 @@ class Prompt():
         "assistant_start_token": "Assistant: ",
         "assistant_end_token": "\n\n",
         "llm_stop_token": "<｜end▁of▁sentence｜>",
+
+        "prompt_start_token": "System: ",
+        "prompt_end_token": "\n\n",
     }
 
     def __init__(self, config):
         self.config = config
-        self.prompt_path = self.module_dir / "prompts" / self.config["prompt_file"]
         self.chat = []
         self.instruction = None
         self.llm = None
@@ -83,15 +97,17 @@ class Prompt():
         else:
             self.llm = llm
     
-    def load_instruction(self):
+    def load_instruction(self, prompt_file):
+        prompt_path = self.module_dir / "prompts" / prompt_file
         try:
-            with open(self.prompt_path) as f:
+            with open(prompt_path) as f:
                 instruction = f.read().strip()
         except Exception:
             print("Prompt not found.")
             raise FileNotFoundError("Unresolved prompt path")
         else:
-            self.instruction = instruction
+            prepared_instruction = self.config["prompt_start_token"] + instruction + self.config["prompt_end_token"]
+            self.instruction = prepared_instruction
 
     def reset_instruction(self):
         self.chat = [self.instruction]
