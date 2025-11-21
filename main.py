@@ -1,39 +1,34 @@
 import os
 import sys
 import argparse
+from src.prompt import Prompt
 
-model_flags = ["dpsk", "hrms", "phi", "tiny"]
 
 # Definition of CLI
 parser = argparse.ArgumentParser(description="CLI LLM Client.")
-parser.add_argument("--model", choices=model_flags, help="model flag", required=True)
+parser.add_argument("--model", choices=Prompt.model_flags, help="Model flag", required=True)
 parser.add_argument("--model_path", type=str, help="Path to model", required=True)
 parser.add_argument("--src", type=str, help="Path to file.")
 parser.add_argument("--debug", type=str, help="Flag for development")
 args = parser.parse_args()
 
-
-# Load model
 if not os.path.exists(args.model_path):
     sys.exit("Path to model must exist.")
 
+# Cases defined in Prompt.model_flags
 match args.model:
     case "dpsk":
-        from src.dpsk import dpsk
-        llm, instruction = dpsk.Prompt.load_model(args.model_path)
-        sysprom = dpsk.Prompt(instruction)
+        sysprom = Prompt(Prompt.dpsk_config)
     case "hrms":
-        from src.hrms import hrms
-        llm, instruction = hrms.Prompt.load_model(args.model_path)
-        sysprom = hrms.Prompt(instruction)
+        sysprom = Prompt(Prompt.hrms_config)
     case "phi":
-        from src.phi import phi
-        llm, instruction = phi.Prompt.load_model(args.model_path)
-        sysprom = phi.Prompt(instruction)
+        sysprom = Prompt(Prompt.phi_config)
     case "tiny":
-        from src.tiny import tiny
-        llm, instruction = tiny.Prompt.load_model(args.model_path)
-        sysprom = tiny.Prompt(instruction)
+        sysprom = Prompt(Prompt.tiny_config)
+
+sysprom.load_instruction()
+sysprom.load_model(args.model_path)
+
 
 def todo_main():
     from src.todo_context import TodoContext
@@ -47,10 +42,11 @@ def todo_main():
             code_block = "```\n" + "".join(path.code_blocks[i][2]) + "\n```"
             sysprom.reset_instruction()
             sysprom.from_user(code_block)
-            text_output = sysprom.gen_response(llm)
+            text_output = sysprom.gen_response()
             print("Response:")
             print(text_output)
             print()
+
 
 def file_main():
     with open(args.src) as f:
@@ -62,14 +58,15 @@ def file_main():
 
     instruction = input("Initial question:\n")
     inital_prompt = instruction + "```\n" + "".join(file_content) + "\n```"
+    sysprom.reset_instruction()
     sysprom.from_user(inital_prompt)
     try:
-        text_output = sysprom.gen_response(llm)
+        text_output = sysprom.gen_response()
     except ValueError:
         sys.exit("Input file to long. Ending session.")
     else:
         sysprom.from_assistant(text_output)
-        print("Summary of given file:\n", text_output)
+        print("Initial response:\n", text_output)
 
     while True:
         try:
@@ -84,14 +81,16 @@ def file_main():
         else:
             sysprom.from_user(user_input)
             try:
-                text_output = sysprom.gen_response(llm)
+                text_output = sysprom.gen_response()
             except ValueError:
                 sys.exit("Context limit reached. Ending session.")
             else:
                 sysprom.from_assistant(text_output)
                 print(text_output)
 
+
 def main():
+    sysprom.reset_instruction()
     while True:
         try:
             print("")
@@ -105,7 +104,7 @@ def main():
         else:
             sysprom.from_user(user_input)
             try:
-                text_output = sysprom.gen_response(llm)
+                text_output = sysprom.gen_response()
             except ValueError:
                 sys.exit("Context limit reached. Ending session.")
             else:
