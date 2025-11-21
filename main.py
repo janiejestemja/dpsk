@@ -57,7 +57,7 @@ def file_main():
     print("Example instruction:\n", example_instruction)
 
     instruction = input("Initial question:\n")
-    inital_prompt = instruction + "```\n" + "".join(file_content) + "\n```"
+    inital_prompt = instruction + "\n```\n" + "".join(file_content) + "\n```"
     sysprom.reset_instruction()
     sysprom.from_user(inital_prompt)
     try:
@@ -96,6 +96,15 @@ def main():
             print("")
             user_input = input("Prompt: ")
             print("")
+            if user_input.startswith("load: "):
+                cmd, file_path = user_input.split(": ", 1)
+                print(cmd)
+                print(file_path)
+                with open(file_path) as f:
+                    file_content = f.read()
+                print(f"File provided from: {file_path} will be appended beneath.")
+                new_input = input("Prompt: ")
+                user_input = new_input + "\n```\n" + "".join(file_content) + "\n```"
 
         except EOFError:
             print("")
