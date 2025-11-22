@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Placeholder{% endblock %}
+
+{% block content %}
+
+{% for issue in issues %}
+<div class="issue">
+  <h3>Todo: {{ issue.i_number }}</h3>
+  <h3>{{ issue.path }}</h3>
+
+  <button class="base-btn" id="codeblock-btn" onclick="showBelow(this)">Extracted code block...</button>
+  <textarea class="codeblock" id="codeblock">{{ issue.block }}</textarea>
+
+  <button class="base-btn" id="response-btn" onclick="showBelow(this)">Response...</button>
+  <textarea class="response" id="response">{{ issue.response }}</textarea>
+</div>
+{% endfor %}
+
+<textarea name="text-area" id="text-area" placeholder="Placeholder..."></textarea>
+<button class="base-btn" id="base-btn">Placeholder</button>
+
+{% endblock %}

@@ -1,12 +1,16 @@
 # LLM Client's
 ---
-> Boilerplate setup for local LLM clients running without GPU. Using various `Q4_K_M` models made available by huggingface.
+> Boilerplate setup for local LLM client running without GPU. Using various `Q4_K_M` models made available by huggingface.
 
 ## Features
 ---
-- Run a local language model in terminal
-- Load in a file at the start to chat about
-- Chat until context limit is reached
+- Run a local language model in terminal (chat)
+  - Load in a file (to chat about)
+  - Chat until context limit is reached
+- Scan a code base for todo-inline comments
+  - Store findings and metadata in a database (SQLite)
+  - Generate llm advice about how to finish what is to do
+  - View database per Webinterface via local server (uvicorn, FastAPI)
 
 ## Setup requirements
 ---
@@ -15,7 +19,6 @@ Clone the repo and change directory into it...
 git clone https://github.com/janiejestemja/dpsk
 cd dpsk
 ```
-
 
 Check `g++` installation...
 ```bash
@@ -57,20 +60,30 @@ pip install -r requirements.txt
 
 > [Link to more information about the model](https://huggingface.co/TheBloke/deepseek-llm-7B-chat-GGUF).
 
-## Run cli
+## Usage
 ---
-> Run an infinite loop with a chatbot until the context window breaks...
 
-### Usage
+### Run cli
 ---
+Run an infinite loop with a chatbot until the context window breaks...
+
 ```plaintext
 main.py [-h] --model {dpsk,hrms,phi,tiny} --model_path MODEL_PATH [--src SRC]
 ```
-> The source argument is used to load a file to chat about. It will be appended to the initial question.
 
 Run the following command to print available options.
 ```bash
 python main.py -h
 ```
 
-> To exit gracefully use `EOFError` (`Ctrl + D`)
+To exit gracefully use `EOFError` (`Ctrl + D`)
+
+### Run local server
+---
+When running the `main.py` script point the `--src` path to the directory to be scanned for todo's to fill the database.
+
+Change directory into the `src` directory and run...
+```bash
+uvicorn api:app --reload
+```
+...to view the database in your browser on localhost.

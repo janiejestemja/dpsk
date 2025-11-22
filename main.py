@@ -8,7 +8,7 @@ from src.prompt import Prompt
 parser = argparse.ArgumentParser(description="CLI LLM Client.")
 parser.add_argument("--model", choices=Prompt.model_flags, help="Model flag.", required=True)
 parser.add_argument("--model_path", type=str, help="Path to model.", required=True)
-parser.add_argument("--debug", type=str, help="Flag for development.")
+parser.add_argument("--src", type=str, help="Path to source.")
 args = parser.parse_args()
 
 if not os.path.exists(args.model_path):
@@ -27,26 +27,55 @@ match args.model:
 
 sysprom.load_model(args.model_path)
 
-
-def todo_main():
+def todo_main(src_path):
     from src.todo_context import TodoContext
-    todo_paths = TodoContext.extract_codeblocks(args.src, 0)
+    from src.db.crud import DBcrud
+    db = DBcrud()
+    if db.create():
+        print("Database created.")
+
+    issue_counter = 1
+    todo_paths = list(
+        TodoContext.extract_codeblocks(
+            src_path,
+            issue_counter
+        )
+    )
     todo_paths.sort(key=lambda x: x.path)
 
-    sysprom.load_instruction(Prompt.prompts["todo"])
+    for path in todo_paths:
+        for i, line_number in enumerate(path.line_numbers):
+            code_block = "".join(path.code_blocks[i][2])
+            db.enter(
+                path.issue_numbers[i],
+                path.path,
+                code_block,
+            )
+            db.enter_advice(
+                path.issue_numbers[i],
+                "Placeholder"
+            )
+
+    # Turn following into unit test
+    """
+    for path in todo_paths:
+        for i, line_number in enumerate(path.line_numbers):
+            block = db.get_block(path.issue_numbers[i])
+            print(block)
+    """
 
     for path in todo_paths:
-        print(path.path)
         for i, line_number in enumerate(path.line_numbers):
-            print("Line Number:\n  " + str(line_number))
-            code_block = "```\n" + "".join(path.code_blocks[i][2]) + "\n```"
             sysprom.reset_instruction()
+            code_block = "```\n" + "".join(path.code_blocks[i][2]) + "\n```"
             sysprom.from_user(code_block)
             text_output = sysprom.gen_response()
-            print("Response:")
-            print(text_output)
-            print("")
+            db.enter_advice(
+                path.issue_numbers[i],
+                text_output,
+            )
 
+    db.close()
 
 def main():
     if args.model == "dpsk":
@@ -85,7 +114,7 @@ def main():
 
 
 if __name__ == "__main__":
-    if args.debug:
-        todo_main()
+    if args.src:
+        todo_main(args.src)
     else:
         main()
