@@ -28,6 +28,11 @@ async def serve_demo(request: Request):
         x.response = block.response
     return templates.TemplateResponse("home.html", {"request": request, "issues":issues})
 
+@app.delete("/delete-db")
+async def delete_db(request: Request):
+    db.delete_all()
+    return {"status": "ok", "items": items}
+
 @app.get("/items")
 async def get_items():
     return items

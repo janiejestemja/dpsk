@@ -3,6 +3,7 @@
 
 {% block content %}
 
+<button class="base-btn" id="delete-btn" onclick="deleteDB()">Delete all entries...</button>
 {% for issue in issues %}
 <div class="issue">
   <h3>Todo: {{ issue.i_number }}</h3>

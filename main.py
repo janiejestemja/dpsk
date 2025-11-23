@@ -64,6 +64,7 @@ def todo_main(src_path):
             print(block)
     """
 
+    sysprom.load_instruction(Prompt.prompts["todo"])
     for path in todo_paths:
         for i, line_number in enumerate(path.line_numbers):
             sysprom.reset_instruction()

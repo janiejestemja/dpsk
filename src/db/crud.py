@@ -51,6 +51,12 @@ class DBcrud():
             self.session.delete(issue)
         self.session.commit()
 
+    def delete_all(self):
+        issues = self.session.query(Issue).all()
+        for issue in issues:
+            self.session.delete(issue)
+        self.session.commit()
+
     def get_block(self, i_number):
         block = self.session.query(
             Codeblock
